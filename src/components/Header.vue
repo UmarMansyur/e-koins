@@ -1,0 +1,185 @@
+<template>
+  <header id="page-topbar">
+    <div class="navbar-header">
+      <div class="d-flex">
+        <!-- LOGO -->
+        <div class="navbar-brand-box" id="navbar-brand-header">
+          <a href="index.html" class="logo logo-light">
+            <span class="logo-sm">
+              <img src="/images/logo.svg" alt="" height="24">
+            </span>
+            <span class="logo-lg text-center">
+              <img src="/images/logo.svg" alt="" height="24"> <span class="logo-txt">E-Koin</span>
+            </span>
+          </a>
+        </div>
+
+        <button type="button" class="btn btn-sm px-3 font-size-16 header-item" id="vertical-menu-btn"
+          @click="clickedSidebar()">
+          <i class="fa fa-fw fa-bars"></i>
+        </button>
+      </div>
+
+      <div class="d-flex">
+        <!-- <div class="dropdown d-inline-block">
+          <button type="button" class="btn header-item noti-icon position-relative"
+            id="page-header-notifications-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i data-feather="bell"></i>
+            <span class="badge bg-danger rounded-pill" v-if="unreadNotification > 0">{{ unreadNotification }}</span>
+          </button>
+          <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
+            aria-labelledby="page-header-notifications-dropdown">
+            <div class="p-3">
+              <div class="row align-items-center">
+                <div class="col">
+                  <h6 class="m-0"> Notifikasi </h6>
+                </div>
+                <div class="col-auto">
+                  <a href="#!" class="small text-reset text-decoration-underline"> Tidak dibaca ({{ unreadNotification
+                  }})</a>
+                </div>
+              </div>
+            </div>
+            <div data-simplebar="init">
+              <div class="simplebar-wrapper">
+                <div class="simplebar-height-auto-observer-wrapper">
+                  <div class="simplebar-height-auto-observer"></div>
+                </div>
+                <div class="simplebar-mask">
+                  <div class="simplebar-offset">
+                    <div class="simplebar-content-wrapper">
+                      <div class="simplebar-content" data-simplebar style="max-height: 230px;">
+                        <div class="text-reset notification-item">
+                          <div class="d-flex" v-for="data in notifications" :key="data.notification_id"
+                            :class="data.status == 'unread' ? 'bg-body-tertiary' : ''" style="cursor: pointer"
+                            @click="readNotification(data.notification_id)">
+                            <div class="flex-shrink-0 me-3">
+                              <img :src="getUser.thumbnail" class="rounded-circle avatar-sm" alt="user-pic">
+                            </div>
+                            <div class="flex-grow-1">
+                              <h6 class="mb-1">{{ getUser.name }}</h6>
+                              <div class="font-size-13 text-muted">
+                                <p class="mb-1">{{ data.message }}</p>
+                                <p class="mb-0"><i class="mdi mdi-clock-outline"></i>
+                                  <span>
+                                    {{ data.created_at }}
+                                  </span>
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="simplebar-placeholder"></div>
+              </div>
+              <div class="simplebar-track simplebar-horizontal">
+                <div class="simplebar-scrollbar"></div>
+              </div>
+              <div class="simplebar-track simplebar-vertical">
+                <div class="simplebar-scrollbar"></div>
+              </div>
+            </div>
+            <div class="p-2 border-top d-grid">
+              <a class="btn btn-sm btn-link font-size-14 text-center" href="javascript:void(0)">
+                <i class="mdi mdi-arrow-right-circle me-1"></i> <span>
+                  Lihat semua
+                </span>
+              </a>
+            </div>
+          </div>
+        </div> -->
+        <div class="dropdown d-inline-block">
+          <button type="button" class="btn header-item border-end border-start"
+            id="page-header-user-dropdown">
+            <img class="rounded-circle header-profile-user" src="https://api.unira.ac.id/img/profil/mhs/8e35dc4c9c4b61b341800d1ef1f10eba.jpg" alt="Header Avatar">
+            <span class="d-none d-xl-inline-block ms-1 fw-medium">Khana Zulfana Imam</span>
+          </button>
+        </div>
+        <div class="dropdown d-inline-block bg-white border-end">
+          <button type="button" class="btn header-item"
+            id="page-header-user-dropdown">
+            <i  data-feather="power"></i>
+          </button>
+        </div>
+        
+      </div>
+    </div>
+  </header>
+</template>
+
+<script lang="ts">
+declare const feather: any;
+</script>
+
+<script setup lang="ts">
+import { onMounted } from 'vue';
+// import { sessionPusher } from '../stores/pusher';
+// import router from '../router';
+// import useApi from '../composables/api';
+// import Notify from '../helpers/notify';
+// import { useSessionStore } from '../stores/session';
+// import { isDisableLayer, isEnableLayer } from '../helpers/handleEvent';
+// import useNotification from '../composables/notification';
+// const { deleteResource } = useApi();
+// const { getUser, destroyUser } = useSessionStore();
+// const { loadNotification, notifications, unreadNotification,   } = useNotification();
+// const { getResource } = useApi();
+function clickedSidebar() {
+  document.body.classList.toggle("pace-done");
+  document.body.classList.toggle("sidebar-enable");
+  if (document.body.getAttribute('data-sidebar-size') == 'lg') {
+    document.body.setAttribute("data-sidebar-size", "sm");
+  } else {
+    document.body.setAttribute('data-sidebar-size', 'lg');
+  }
+  if (window.innerWidth < 922) {
+    document.body.setAttribute('data-sidebar-size', 'lg');
+    document.body.classList.remove("pace-done");
+  } else {
+    document.getElementById('thumbnail')?.classList.toggle('d-none');
+  }
+}
+
+// async function logout() {
+//   const response = await deleteResource('/auth/logout');
+//   if (response) {
+//     Notify.success('Berhasil logout');
+//     sessionStorage.clear();
+//     destroyUser();
+//     router.replace('/login');
+//   }
+// }
+
+// const { getPusher } = sessionPusher();
+onMounted(async () => {
+  //   isEnableLayer();
+  document.body.setAttribute('data-sidebar-size', 'lg');
+  if (window.innerWidth <= 992) {
+    clickedSidebar();
+  }
+  //   await loadNotification();
+  //   subscribeNotification();
+});
+
+// const subscribeNotification = () => {
+//   const pusher: any = getPusher;
+//   const chanel = pusher.subscribe('testing');
+//   chanel.bind('event', async (_data: any) => {
+//     await loadNotification();
+//   });
+//   feather.replace();
+//   isDisableLayer();
+// };
+
+// const readNotification = async (id: string) => {
+//   const response = await getResource('/notification/' + id);
+//   if (response) {
+//     await loadNotification();
+//     router.replace('/verifikasi-pembayaran');
+//   }
+//   isDisableLayer();
+// };
+</script>
