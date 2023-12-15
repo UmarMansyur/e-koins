@@ -18,6 +18,17 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
+    path: '/login',
+    name: 'Login',
+    component: () => import('../views/authentication/Login.vue'),
+    meta: {
+      requiresAuth: true,
+    },
+    beforeEnter: async () => {
+
+    }
+  },
+  {
     path: '/data-siswa',
     name: 'Data Siswa',
     component: () => import('../views/administrator/Student.vue'),
