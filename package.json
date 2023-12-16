@@ -17,11 +17,11 @@
     "onesignal-vue": "^1.0.2",
     "pinia": "^2.1.6",
     "pusher-js": "^8.3.0",
-    "vee-validate": "^4.10.8",
+    "vee-validate": "^4.12.2",
     "vue": "^3.3.4",
     "vue-cryptojs": "^2.4.3",
     "vue-router": "^4.2.4",
-    "yup": "^1.2.0"
+    "yup": "^1.3.3"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.1.1",

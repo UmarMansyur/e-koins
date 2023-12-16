@@ -24,11 +24,11 @@ export const useSessionStore = defineStore({
     async setUser() {
       if(sessionStorage.getItem('token') == null) return;
       const response = await decodeToken();
-      this.id = response.user_account_id;
-      this.name = response.username;
+      this.id = response.id;
+      this.name = response.name;
       this.email = response.email;
-      this.role = response.type == 'admin' ? 'Administrator' : response.type;
-      this.thumbnail = import.meta.env.VITE_API_KMW +'/' + response.thumbnail;
+      this.role = response.role;
+      this.thumbnail = response.thumbnail;
       this.phone = response.phone;
       this.gender = response.gender;
       this.address = response.address;

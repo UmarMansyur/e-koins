@@ -69,11 +69,15 @@ export default function usePagination(path: string, q?:any ,query?: any) {
     } else {
       query.push(`${path}?page=${currentPage.value}&limit=${limitPage.value}`);
     }
+    // total_page: totalPages,
+    // total_data: totalRows,
+    // current_page: Number(query.page) || 1,
+    // data: result
     const response = await getResource(query[0]);
     result.value = response.data.data;
-    totalPage.value = response.data.totalPage;
-    totalData.value = response.data.totalRows;
-    currentPage.value = Number(response.data.pageNumber);
+    totalPage.value = response.data.total_page;
+    totalData.value = response.data.total_data;
+    currentPage.value = Number(response.data.current_page);
     generateButtons();
     startNumber.value = (currentPage.value - 1) * limitPage.value + 1;
     isDisableLayer();
@@ -90,9 +94,9 @@ export default function usePagination(path: string, q?:any ,query?: any) {
     const response = await getResource(search[0]);
     const data: any = await response;
     result.value = data.data.data;
-    totalPage.value = data.data.totalPage;
-    totalData.value = data.data.totalRows;
-    currentPage.value = data.data.pageNumber;
+    totalPage.value = data.data.total_page;
+    totalData.value = data.data.total_data;
+    currentPage.value = data.data.current_page;
 
     generateButtons();
     startNumber.value = (currentPage.value - 1) * limitPage.value + 1;

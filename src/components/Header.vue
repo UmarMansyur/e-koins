@@ -92,19 +92,18 @@
           </div>
         </div> -->
         <div class="dropdown d-inline-block">
-          <button type="button" class="btn header-item border-end border-start"
-            id="page-header-user-dropdown">
-            <img class="rounded-circle header-profile-user" src="https://api.unira.ac.id/img/profil/mhs/8e35dc4c9c4b61b341800d1ef1f10eba.jpg" alt="Header Avatar">
-            <span class="d-none d-xl-inline-block ms-1 fw-medium">Khana Zulfana Imam</span>
+          <button type="button" class="btn header-item border-end border-start" id="page-header-user-dropdown">
+            <img class="rounded-circle header-profile-user"
+              :src="session.getUser.thumbnail" alt="Header Avatar">
+            <span class="d-none d-xl-inline-block ms-1 fw-medium">{{ session.getUser.name }}</span>
           </button>
         </div>
         <div class="dropdown d-inline-block bg-white border-end">
-          <button type="button" class="btn header-item"
-            id="page-header-user-dropdown">
-            <i  data-feather="power"></i>
+          <button type="button" class="btn header-item" id="page-header-user-dropdown" @click="logout">
+            <i data-feather="power"></i>
           </button>
         </div>
-        
+
       </div>
     </div>
   </header>
@@ -116,6 +115,8 @@ declare const feather: any;
 
 <script setup lang="ts">
 import { onMounted } from 'vue';
+import { useSessionStore } from '../stores/session';
+import router from '../router';
 // import { sessionPusher } from '../stores/pusher';
 // import router from '../router';
 // import useApi from '../composables/api';
@@ -124,7 +125,7 @@ import { onMounted } from 'vue';
 // import { isDisableLayer, isEnableLayer } from '../helpers/handleEvent';
 // import useNotification from '../composables/notification';
 // const { deleteResource } = useApi();
-// const { getUser, destroyUser } = useSessionStore();
+const session = useSessionStore();
 // const { loadNotification, notifications, unreadNotification,   } = useNotification();
 // const { getResource } = useApi();
 function clickedSidebar() {
@@ -143,15 +144,11 @@ function clickedSidebar() {
   }
 }
 
-// async function logout() {
-//   const response = await deleteResource('/auth/logout');
-//   if (response) {
-//     Notify.success('Berhasil logout');
-//     sessionStorage.clear();
-//     destroyUser();
-//     router.replace('/login');
-//   }
-// }
+async function logout() {
+  router.replace('/login');
+  session.destroyUser();
+  localStorage.removeItem('token');
+}
 
 // const { getPusher } = sessionPusher();
 onMounted(async () => {

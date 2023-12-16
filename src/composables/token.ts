@@ -7,23 +7,23 @@ const { checkResponse, getResource } = useApi();
 export default function useToken() {
     const isAdmin = ref<Boolean>(false);
     async function setToken(token: any) {
-        sessionStorage.setItem('token', JSON.stringify(token));
+        localStorage.setItem('token', JSON.stringify(token));
     }
 
     function getAccessToken() {
-        if (sessionStorage.getItem('token')) {
-            return JSON.parse(sessionStorage.getItem('token')!);
+        if (localStorage.getItem('token')) {
+            return JSON.parse(localStorage.getItem('token')!);
         }
         return '';
     }
 
     async function clearToken() {
-        sessionStorage.clear();
+        localStorage.clear();
     }
 
     async function decodeToken() {
         try {
-            const response = await getResource('/auth/me');
+            const response = await getResource('/auth/whoami');
             await checkResponse(response);
             checkRole(response.data.type);
             return await response.data;
