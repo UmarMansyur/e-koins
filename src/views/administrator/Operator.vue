@@ -174,14 +174,12 @@ const {
   currentPage,
   totalPage,
   pageList,
-  search,
   isFirstPage,
   isLastPage,
   nextPage,
   prevPage,
   goToPage,
   fetchData,
-  changeLimit
 } = usePagination("/user", '', query);
 
 onMounted(async () => {
