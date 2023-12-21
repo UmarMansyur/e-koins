@@ -38,9 +38,9 @@
                       <div class="p-2 mt-5">
                         <form action="index.html">
                           <div class="mb-3">
-                            <label for="username" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="username" name="username"
-                              placeholder="Masukkan username" autocomplete="on" v-model="username">
+                            <label for="email" class="form-label">Email: </label>
+                            <input type="text" class="form-control" id="email" name="email"
+                              placeholder="Masukkan email" autocomplete="on" v-model="email">
                           </div>
                           <div class="mb-3">
                             <div class="float-end">
@@ -97,7 +97,7 @@ const { setToken } = useToken();
 const session = useSessionStore();
 
 const schema = yup.object().shape({
-  username: yup.string().required(),
+  email: yup.string().required(),
   password: yup.string().required(),
   remember: yup.boolean(),
 });
@@ -105,41 +105,41 @@ const schema = yup.object().shape({
 const { meta } = useForm({
   validationSchema: schema,
   initialValues: {
-    username: '',
+    email: '',
     password: '',
     remember: false,
   },
 });
 
-const { value: username } = useField<string>('username');
+const { value: email } = useField<string>('email');
 const { value: password } = useField<string>('password');
 const { value: remember } = useField<boolean>('remember');
 
 onMounted(() => {
-  if(localStorage.getItem('username') && localStorage.getItem('password')) {
-    username.value = localStorage.getItem('username') || '';
+  if(localStorage.getItem('email') && localStorage.getItem('password')) {
+    email.value = localStorage.getItem('email') || '';
     password.value = localStorage.getItem('password') || '';
     remember.value = true;
   }
 });
 
 const tryLogin = async () => {
-  const response = await fetch('http://156.67.221.188:1304/api/v1/auth/login', {
+  const response = await fetch(import.meta.env.VITE_API_EKOIN + '/auth/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      username: username.value,
+      email: email.value,
       password: password.value
     }),
   });
 
   const data = await response.json();
   await setToken(data.data.token);
-  session.setUser();
+  await session.setUser();
   if(remember.value) {
-    localStorage.setItem('username', username.value);
+    localStorage.setItem('email', email.value);
     localStorage.setItem('password', password.value);
   }
   router.replace('/');

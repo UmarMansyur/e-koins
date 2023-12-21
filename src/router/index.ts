@@ -105,6 +105,17 @@ const routes: Array<RouteRecordRaw> = [
 
     }
   },
+  {
+    path: '/pengaturan/kelas',
+    name: 'Kelas',
+    component: () => import('../views/administrator/Kelas.vue'),
+    meta: {
+      requiresAuth: true,
+    },
+    beforeEnter: async () => {
+
+    }
+  },
 ];
 
 

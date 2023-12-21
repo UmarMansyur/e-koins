@@ -1,29 +1,16 @@
+
 <template>
   <Parent>
     <BreadCrumb title="Manajemen Tahun Ajar" />
     <div class="row">
       <div class="col-md-12 text-end">
-        <button class="btn btn-info" data-bs-target="#dinamyc-modal" data-bs-toggle="modal" @click="defaultValue"><i
-            class="bx bx-plus-circle"></i> Tambah Tahun Ajar</button>
+        <button class="btn btn-info" data-bs-target="#dinamyc-modal" data-bs-toggle="modal" @click="resetValue"><i
+            class="bx bx-plus-circle"></i> Tambah Kelas</button>
         <Modal title="Tambah Tahun Ajar">
           <div class="row">
             <div class="col-md-12 mb-3 text-start">
-              <label for="username" class="form-label">Tahun Akademik:</label>
-              <input type="text" id="username" class="form-control" v-model="tahun_akademik" placeholder="Contoh. 2023/2024">
-            </div>
-            <div class="col-md-12 mb-3 text-start">
-              <label for="password" class="form-label">Semester:</label>
-              <select class="form-select" v-model="semester">
-                <option value="" disabled>Pilih Semester</option>
-                <option value="1">Ganjil</option>
-                <option value="2">Genap</option>
-              </select>
-            </div>
-            <div class="col-md-12">
-              <div class="form-check form-switch form-switch-md mb-3" dir="ltr">
-                <input type="checkbox" class="form-check-input" id="customSwitch1" v-model="status">
-                <label class="form-check-label" for="customSwitch1">Aktif</label>
-              </div>
+              <label for="username" class="form-label">Kelas</label>
+              <input type="text" id="username" class="form-control" v-model="kelas">
             </div>
             <div class="col-6 mb-3 text-start">
               <button class="btn btn-danger" data-bs-dismiss="modal"><i class="bx bx-x"></i> Batal</button>
@@ -40,25 +27,21 @@
         <div class="row mt-3">
           <div class="col-md-12">
             <div class="table-responsive">
-              <table class="table table-bordered">
-                <thead class="text-align-middle">
+              <table class="table table-bordered table-hover table-striped">
+                <thead class="align-middle">
                   <tr>
-                    <th class="text-center">No</th>
-                    <th>Tahun Akademik</th>
-                    <th>Semester</th>
-                    <th class="text-center">Status</th>
-                    <th class="text-center" style="width: 20%;">Aksi</th>
+                    <th class="text-center" style="width: 80px;">No</th>
+                    <th>Nama Kelas</th>
+                    <th class="text-center" style="width: 10%;">Jumlah Siswa</th>
+                    <th class="text-center" style="width: 30%;">Aksi</th>
                   </tr>
                 </thead>
                 <tbody class="align-middle">
                   <tr v-for="(item, index) in result" :key="index">
                     <td class="text-center">{{ index + 1 }}</td>
                     <td>{{ item.name }}</td>
-                    <td>{{ item.semester == 1 ? 'Ganjil' : 'Genap' }}</td>
                     <td class="text-center">
-                      <span class="badge font-size-11"
-                        :class="item.status == 1 ? 'bg-success' : 'bg-danger'">{{ item.status == 1 ? 'Aktif'
-                          : 'Tidak Aktif' }}</span>
+                      {{ item.totalStudent }}
                     </td>
                     <td class="text-center">
                       <button type="button" class="btn btn-sm btn-warning waves-effect btn-label waves-light mx-2"
@@ -112,7 +95,7 @@ const {
   goToPage,
   fetchData,
   changeLimit
-} = usePagination("/academicYear", '', query);
+} = usePagination("/class", '', query);
 
 onMounted(async () => {
   isEnableLayer();
@@ -121,37 +104,29 @@ onMounted(async () => {
 });
 
 const schema = yup.object().shape({
-  tahun_akademik: yup.string().required(),
-  semester: yup.string().required(),
-  status: yup.string().required(),
+  kelas: yup.string().required(),
 });
 
 const { meta } = useForm({
   validationSchema: schema,
   initialValues: {
-    tahun_akademik: '',
-    semester: '',
-    status: false,
+    kelas: '',
   },
 });
 
-const { value: tahun_akademik } = useField<string>('tahun_akademik');
-const { value: semester } = useField<string>('semester');
-const { value: status } = useField<boolean>('status');
+const { value: kelas } = useField<string>('kelas');
 
 const { postResource, getResource, putResource, deleteResource } = useApi();
 const save = async () => {
   const data = {
-    name: tahun_akademik.value,
-    semester: Number(semester.value),
-    status: status.value,
+    name: kelas.value,
   };
   let response;
   if (id.value > 0) {
-    response = await putResource('/academicYear/' + id.value, data);
+    response = await putResource('/class/' + id.value, data);
     id.value = 0;
   } else {
-    response = await postResource('/academicYear', data);
+    response = await postResource('/class', data);
   }
   if (response) {
     Notify.success(response.message);
@@ -159,27 +134,22 @@ const save = async () => {
     isDisableLayer();
   }
 
-  tahun_akademik.value = '';
-  semester.value = '';
-  status.value = false;
+  kelas.value = '';
 };
 
 const id = ref<number>(0);
 const edit = async (i: number) => {
-  const response = await getResource('/academicYear/' + i);
+  const response = await getResource('/class/' + i);
   if (response) {
-    tahun_akademik.value = response.data.name;
-    semester.value = response.data.semester;
-    status.value = response.data.status;
+    kelas.value = response.data.name;
     id.value = i;
-    console.log(id.value);
     isDisableLayer();
   }
 };
 
 const hapus = async (i: number) => {
   Notify.confirm('Apakah anda yakin ingin menghapus data ini?', async () => {
-    const response = await deleteResource('/academicYear/' + i);
+    const response = await deleteResource('/class/' + i);
     if (response) {
       Notify.success(response.message);
       await fetchData();
@@ -187,11 +157,8 @@ const hapus = async (i: number) => {
   });
 };
 
-const defaultValue = async() => {
-  tahun_akademik.value = '';
-  semester.value = '';
-  status.value = false;
+const resetValue = () => {
+  kelas.value = '';
   id.value = 0;
-}
-
+};
 </script>

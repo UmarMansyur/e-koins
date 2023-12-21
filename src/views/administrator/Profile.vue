@@ -10,17 +10,17 @@
                 <div class="d-flex align-items-start mt-3 mt-sm-0">
                   <div class="flex-shrink-0">
                     <div class="avatar-xl me-3">
-                      <img src="https://api.unira.ac.id/img/profil/mhs/8e35dc4c9c4b61b341800d1ef1f10eba.jpg" alt="" class="img-fluid rounded-circle avatar-xl img-thumbnail d-block">
+                      <img :src="session.getUser.thumbnail" alt=""
+                        class="img-fluid rounded-circle avatar-xl img-thumbnail d-block">
                     </div>
                   </div>
                   <div class="flex-grow-1">
                     <div>
-                      <h5 class="font-size-16 mb-1">Phyllis Gatlin</h5>
-                      <p class="text-muted font-size-13">Full Stack Developer</p>
-  
+                      <h5 class="font-size-16 mb-1">{{ session.getUser.name }}</h5>
+                      <p class="text-muted font-size-13 mb-2">{{ session.getUser.role }}</p>
                       <div class="d-flex flex-wrap align-items-start gap-2 gap-lg-3 text-muted font-size-13">
-                        <div><i class="mdi mdi-circle-medium me-1 text-success align-middle"></i>Development</div>
-                        <div><i class="mdi mdi-circle-medium me-1 text-success align-middle"></i>phyllisgatlin@minia.com
+                        <div>
+                          <i class="mdi mdi-email me-1 text-info"></i> {{ session.getUser.email }}
                         </div>
                       </div>
                     </div>
@@ -30,25 +30,12 @@
               <div class="col-sm-auto order-1 order-sm-2">
                 <div class="d-flex align-items-start justify-content-end gap-2">
                   <div>
-                    <button type="button" class="btn btn-soft-light"><i class="me-1"></i> Message</button>
-                  </div>
-                  <div>
-                    <div class="dropdown">
-                      <button class="btn btn-link font-size-16 shadow-none text-muted dropdown-toggle" type="button"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bx bx-dots-horizontal-rounded"></i>
-                      </button>
-                      <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="#">Action</a></li>
-                        <li><a class="dropdown-item" href="#">Another action</a></li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                      </ul>
-                    </div>
+                    <button type="button" class="btn btn-warning"><i class="bx bx-key"></i> Update Akun</button>
                   </div>
                 </div>
               </div>
             </div>
-  
+
             <ul class="nav nav-tabs-custom card-header-tabs border-top mt-4" id="pills-tab" role="tablist">
               <li class="nav-item" role="presentation">
                 <a class="nav-link px-3 active" data-bs-toggle="tab" href="#overview" role="tab"
@@ -61,67 +48,90 @@
             </ul>
           </div>
         </div>
-  
+
         <div class="tab-content">
           <div class="tab-pane active show" id="overview" role="tabpanel">
             <div class="card">
               <div class="card-header">
-                <h5 class="card-title mb-0">About</h5>
+                <h5 class="card-title mb-0">Biodata</h5>
               </div>
               <div class="card-body">
                 <div>
                   <div class="pb-3">
                     <div class="row">
-                      <div class="col-xl-2">
-                        <div>
-                          <h5 class="font-size-15">Bio :</h5>
-                        </div>
-                      </div>
-                      <div class="col-xl">
-                        <div class="text-muted">
-                          <p class="mb-2">Hi I'm Phyllis Gatlin, Lorem Ipsum is simply dummy text of the printing and
-                            typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the
-                            1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen
-                            book. It has survived not only five centuries, but also the leap into electronic typesetting,
-                            remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
-                            sheets containing Lorem Ipsum passages</p>
-                          <p class="mb-0">It is a long established fact that a reader will be distracted by the readable
-                            content of a page when looking at it has a more-or-less normal distribution of letters</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-  
-                  <div class="py-3">
-                    <div class="row">
-                      <div class="col-xl-2">
-                        <div>
-                          <h5 class="font-size-15">Experience :</h5>
-                        </div>
-                      </div>
-                      <div class="col-xl">
-                        <div class="text-muted">
-                          <p>If several languages coalesce, the grammar of the resulting language is more simple and regular
-                            than that of the individual languages. The new common language will be more simple and regular
-                            than the existing European languages. It will be as simple as Occidental; in fact, it will be
-                            Occidental. To an English person, it will seem like simplified English, as a skeptical Cambridge
-                            friend of mine told me what Occidental is. The European languages are members of the same
-                            family.
-                            Their separate existence is a myth. For science, music, sport, etc</p>
-  
-                          <ul class="list-unstyled mb-0">
-                            <li class="py-1"><i class="mdi mdi-circle-medium me-1 text-success align-middle"></i>Donec vitae
-                              sapien ut libero venenatis faucibus</li>
-                            <li class="py-1"><i class="mdi mdi-circle-medium me-1 text-success align-middle"></i>Quisque
-                              rutrum aenean imperdiet</li>
-                            <li class="py-1"><i class="mdi mdi-circle-medium me-1 text-success align-middle"></i>Integer
-                              ante
-                              a consectetuer eget</li>
-                            <li class="py-1"><i class="mdi mdi-circle-medium me-1 text-success align-middle"></i>Phasellus
-                              nec
-                              sem in justo pellentesque</li>
-                          </ul>
-                        </div>
+                      <div class="mt-4 mt-lg-0">
+                        <form>
+                          <div class="row mb-4">
+                            <label for="username" class="col-sm-3 col-form-label">Nama Lengkap: </label>
+                            <div class="col-sm-9">
+                              <input type="text" class="form-control" id="username" placeholder="Username" v-model="name">
+                            </div>
+                          </div>
+                          <div class="row mb-4">
+                            <label for="role" class="col-sm-3 col-form-label">Role: </label>
+                            <div class="col-sm-9">
+                              <input type="text" class="form-control" id="role" placeholder="Role" v-model="role">
+                            </div>
+                          </div>
+                          <div class="row mb-4">
+                            <label for="role" class="col-sm-3 col-form-label">Jenis Kelamin: </label>
+                            <div class="col-sm-9 d-flex">
+                              <div class="form-check form-switch mt-2" dir="ltr">
+
+                                <input type="checkbox" class="form-check-input" id="male" value="Pria" v-model="male"
+                                  @click="handleGender">
+                                <label class="form-check-label" for="male">Pria</label>
+                              </div>
+                            </div>
+                            <div class="col-sm-3"></div>
+                            <div class="col-sm-9">
+                              <div class="form-check form-switch mt-2" dir="ltr">
+                                <input type="checkbox" class="form-check-input" id="female" value="Perempuan"
+                                  v-model="female" @click="handleGender">
+                                <label class="form-check-label" for="female">Perempuan</label>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row mb-4">
+                            <label for="address" class="col-sm-3 col-form-label">Alamat: </label>
+                            <div class="col-sm-9">
+                              <textarea class="form-control" id="address" placeholder="Alamat" v-model="address" cols="5"
+                                rows="10"></textarea>
+                            </div>
+                          </div>
+                          <div class="row mb-4">
+                            <label for="phone" class="col-sm-3 col-form-label">No.Hp: </label>
+                            <div class="col-sm-9">
+                              <input type="text" class="form-control" id="phone" placeholder="No. Hp" v-model="phone">
+                            </div>
+                          </div>
+                          <div class="row mb-4">
+                            <label for="birthday" class="col-sm-3 col-form-label">Tanggal Lahir: </label>
+                            <div class="col-sm-9">
+                              <input type="date" class="form-control" id="birthday" placeholder="Tanggal Lahir"
+                                v-model="birthDate">
+                            </div>
+                          </div>
+
+                          <div class="row mb-4">
+                            <label for="foto" class="col-sm-3 col-form-label">Foto: </label>
+                            <div class="col-sm-9">
+                              <input type="file" class="form-control" id="foto" placeholder="Foto"
+                                @change="handleFileUpload">
+                            </div>
+                          </div>
+
+                          <div class="row justify-content-end">
+                            <div class="col-sm-9">
+                              <div>
+
+                                <button type="button" class="btn btn-info" :disabled="!meta.valid" @click="saveUpdate">
+                                  <i class="bx bx-save"></i> Simpan
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </form>
                       </div>
                     </div>
                   </div>
@@ -129,75 +139,7 @@
               </div>
             </div>
           </div>
-          <div class="tab-pane" id="about" role="tabpanel">
-            <div class="card">
-              <div class="card-header">
-                <h5 class="card-title mb-0">About</h5>
-              </div>
-              <div class="card-body">
-                <div>
-                  <div class="pb-3">
-                    <h5 class="font-size-15">Bio :</h5>
-                    <div class="text-muted">
-                      <p class="mb-2">Hi I'm Phyllis Gatlin, Lorem Ipsum is simply dummy text of the printing and
-                        typesetting
-                        industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an
-                        unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived
-                        not only five centuries, but also the leap into electronic typesetting, remaining essentially
-                        unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem
-                        Ipsum
-                        passages</p>
-                      <p class="mb-2">It is a long established fact that a reader will be distracted by the readable content
-                        of a page when looking at it has a more-or-less normal distribution of letters</p>
-                      <p>It will be as simple as Occidental; in fact, it will be Occidental. To an English person, it will
-                        seem like simplified English, as a skeptical Cambridge friend of mine told me what Occidental is.
-                        The
-                        European languages are members of the same family. Their separate existence is a myth.</p>
-  
-                      <ul class="list-unstyled mb-0">
-                        <li class="py-1"><i class="mdi mdi-circle-medium me-1 text-success align-middle"></i>Donec vitae
-                          sapien ut libero venenatis faucibus</li>
-                        <li class="py-1"><i class="mdi mdi-circle-medium me-1 text-success align-middle"></i>Quisque rutrum
-                          aenean imperdiet</li>
-                        <li class="py-1"><i class="mdi mdi-circle-medium me-1 text-success align-middle"></i>Integer ante a
-                          consectetuer eget</li>
-                      </ul>
-                    </div>
-                  </div>
-  
-                  <div class="pt-3">
-                    <h5 class="font-size-15">Experience :</h5>
-                    <div class="text-muted">
-                      <p>If several languages coalesce, the grammar of the resulting language is more simple and regular
-                        than
-                        that of the individual languages. The new common language will be more simple and regular than the
-                        existing European languages. It will be as simple as Occidental; in fact, it will be Occidental. To
-                        an
-                        English person, it will seem like simplified English, as a skeptical Cambridge friend of mine told
-                        me
-                        what Occidental is. The European languages are members of the same family. Their separate existence
-                        is
-                        a myth. For science, music, sport, etc</p>
-  
-                      <ul class="list-unstyled mb-0">
-                        <li class="py-1"><i class="mdi mdi-circle-medium me-1 text-success align-middle"></i>Donec vitae
-                          sapien ut libero venenatis faucibus</li>
-                        <li class="py-1"><i class="mdi mdi-circle-medium me-1 text-success align-middle"></i>Quisque rutrum
-                          aenean imperdiet</li>
-                        <li class="py-1"><i class="mdi mdi-circle-medium me-1 text-success align-middle"></i>Integer ante a
-                          consectetuer eget</li>
-                        <li class="py-1"><i class="mdi mdi-circle-medium me-1 text-success align-middle"></i>Phasellus nec
-                          sem
-                          in justo pellentesque</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <!-- end card body -->
-            </div>
-            <!-- end card -->
-          </div>
+          <ProfileAccount :email="email"/>
         </div>
       </div>
     </div>
@@ -206,5 +148,119 @@
 
 <script setup lang="ts">
 import Parent from '../../components/Parent.vue';
+import { useSessionStore } from '../../stores/session';
+import * as yup from 'yup';
+import { useField, useForm } from 'vee-validate';
+import { onMounted, ref } from 'vue';
+import useApi from '../../composables/api';
+import { isDisableLayer, isEnableLayer } from '../../helpers/handleEvent';
+import Notify from '../../helpers/notify';
+import ProfileAccount from './ProfileAccount.vue';
 
+const session = useSessionStore();
+
+const schema = yup.object().shape({
+  name: yup.string().required(),
+  role: yup.string().required(),
+  male: yup.bool(),
+  female: yup.bool(),
+  address: yup.string().required(),
+  phone: yup.string().required(),
+  birthDate: yup.string().required(),
+  thumbnail: yup.string(),
+});
+
+const { meta } = useForm({
+  validationSchema: schema,
+  initialValues: {
+    name: '',
+    role: '',
+    address: '',
+    phone: '',
+    birthDate: '',
+    thumbnail: '',
+    female: ''
+  }
+});
+
+const { value: name } = useField<string>('name');
+const { value: role } = useField<string>('role');
+const { value: female } = useField<boolean>('female');
+const { value: address } = useField<string>('address');
+const { value: phone } = useField<string>('phone');
+const { value: birthDate } = useField<string>('birthDate');
+const { value: thumbnail } = useField<string>('thumbnail');
+const { value: male } = useField<boolean>('male');
+const handleFileUpload = (e: any) => {
+  const file = e.target.files[0];
+  thumbnail.value = file;
+};
+
+
+
+const email = ref<string>('');
+onMounted(async () => {
+  isEnableLayer();
+  await tryFetch();
+  isDisableLayer();
+
+});
+
+const { getResource, putResource, postResourceFile } = useApi();
+const tryFetch = async () => {
+  const response = await getResource('/auth/whoami');
+  if (response) {
+    name.value = response.data.name;
+    if (response.data.gender == 'Perempuan') {
+      female.value = true;
+    }
+    if (response.data.gender == 'Pria') {
+      male.value = true;
+    }
+    email.value = response.data.email;
+    role.value = response.data.role;
+    address.value = response.data.address;
+    phone.value = response.data.phone;
+    birthDate.value = new Date(response.data.birthDate).toISOString().slice(0, 10);
+  }
+};
+
+const handleGender = () => {
+  male.value = !male.value;
+  female.value = !female.value;
+  if (male.value) {
+    female.value = false;
+  }
+  if (female.value) {
+    male.value = false;
+  }
+};
+
+
+
+const saveUpdate = async () => {
+  const data = {
+    name: name.value,
+    role: role.value,
+    gender: male.value ? 'Pria' : 'Perempuan',
+    address: address.value,
+    phone: phone.value,
+    birthDate: birthDate.value,
+  };
+
+  Notify.confirm('Apakah anda yakin ingin memperbaharui profile?', async function () {
+    isEnableLayer();
+    const response = await putResource('/user/' + session.getUser.id, data);
+    if (thumbnail.value != "") {
+      await postResourceFile('user/thumbnail/' + session.getUser.id, 'POST', { thumbnail: thumbnail.value });
+      thumbnail.value = "";
+    }
+    if (response) {
+      Notify.success('Profile berhasil diperbaharui');
+    }
+    await tryFetch();
+    isDisableLayer();
+  });
+
+};
 </script>

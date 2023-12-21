@@ -7,14 +7,18 @@
           <div class="card-body shadow">
             <div class="row align-items-center">
               <div class="col-6"><span class="text-muted mb-3 lh-1 d-block text-truncate">Jumlah Siswa</span>
-                <h4 class="mb-3"><span class="counter-value">1</span></h4>
+                <h4 class="mb-3"><span class="counter-value">{{ datas.total_class }}</span></h4>
               </div>
               <div class="col-6 text-end">
                 <div class="avatar-md float-end"><span class="avatar-title rounded-circle font-size-24 bg-danger">
                     <i data-feather="users"></i></span></div>
               </div>
             </div>
-            <div class="text-nowrap"><span class="badge bg-success text-white">2023-12-14</span></div>
+            <div class="text-nowrap">
+              <span class="badge bg-success text-white">
+                {{ new Date().toISOString().slice(0, 10) }}
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -23,14 +27,18 @@
           <div class="card-body shadow">
             <div class="row align-items-center">
               <div class="col-6"><span class="text-muted mb-3 lh-1 d-block text-truncate">Total Setoran</span>
-                <h4 class="mb-3"><span class="counter-value">0</span></h4>
+                <h4 class="mb-3"><span class="counter-value">{{ convertToRp(datas.total_income) }}</span></h4>
               </div>
               <div class="col-6 text-end">
                 <div class="avatar-md float-end"><span class="avatar-title rounded-circle font-size-24 bg-success"><i
                       data-feather="dollar-sign"></i></span></div>
               </div>
             </div>
-            <div class="text-nowrap"><span class="badge bg-success text-white">2023-12-14</span></div>
+            <div class="text-nowrap">
+              <span class="badge bg-success text-white">
+                {{ new Date().toISOString().slice(0, 10) }}
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -40,7 +48,7 @@
           <div class="card-body shadow">
             <div class="row align-items-center">
               <div class="col-6"><span class="text-muted mb-3 lh-1 d-block text-truncate">Setoran Hari Ini</span>
-                <h5 class="mb-3"><span class="counter-value">Rp 0</span></h5>
+                <h5 class="mb-3"><span class="counter-value">{{ convertToRp(datas.income)  }}</span></h5>
               </div>
               <div class="col-6 text-end">
                 <div class="avatar-md float-end"><span class="avatar-title rounded-circle font-size-24 bg-warning"><svg
@@ -54,7 +62,11 @@
                     </svg></span></div>
               </div>
             </div>
-            <div class="text-nowrap"><span class="badge bg-success text-white">2023-12-14</span></div>
+            <div class="text-nowrap">
+              <span class="badge bg-success text-white">
+                {{ new Date().toISOString().slice(0, 10) }}
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -63,6 +75,24 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, ref } from "vue";
 import BreadCrumb from "../../components/BreadCrumb.vue";
 import Parent from "../../components/Parent.vue";
+import useApi from "../../composables/api";
+import { convertToRp, isDisableLayer } from "../../helpers/handleEvent";
+
+const { getResource } = useApi();
+onMounted( async () => {
+  loadData();
+});
+
+const datas = ref<any>({});
+const loadData = async () => {
+  const response = await getResource('/dashboard');
+  isDisableLayer();
+  if(response) {
+    datas.value = response.data;
+
+  }
+}
 </script>

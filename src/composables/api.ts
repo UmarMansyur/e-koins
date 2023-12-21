@@ -8,7 +8,7 @@ export default function useApi() {
     try {
       isEnableLayer();
       await validateToken();
-      const response = await fetch(`${import.meta.env.VITE_API_KMW}${endpoint}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_EKOIN}${endpoint}`, {
         method,
         headers: {
           'Content-Type': 'application/json',
@@ -44,7 +44,7 @@ export default function useApi() {
   async function graphqlQuery(query: string, variables?: any) {
     try {
       await validateToken();
-      const response = await fetch(`${import.meta.env.VITE_API_KMW}/graphql`, {
+      const response = await fetch(`${import.meta.env.VITE_API_EKOIN}/graphql`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -81,7 +81,7 @@ export default function useApi() {
         formData.append(name, payload[name]);
       }
 
-      const response = await axios(`${import.meta.env.VITE_API_KMW}/${endpoint}`, {
+      const response = await axios(`${import.meta.env.VITE_API_EKOIN}/${endpoint}`, {
         method,
         headers: {
           'Authorization': 'Bearer ' + getAccessToken()
@@ -106,7 +106,7 @@ export default function useApi() {
         formData.append(name, payload[name]);
       }
 
-      const response = await axios(`${import.meta.env.VITE_API_KMW}/${endpoint}`, {
+      const response = await axios(`${import.meta.env.VITE_API_EKOIN}/${endpoint}`, {
         method: 'PUT',
         headers: {
           'Authorization': 'Bearer ' + getAccessToken(),

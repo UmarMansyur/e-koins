@@ -22,7 +22,7 @@ export const useSessionStore = defineStore({
   },
   actions: {
     async setUser() {
-      if(sessionStorage.getItem('token') == null) return;
+      if(localStorage.getItem('token') == null) return;
       const response = await decodeToken();
       this.id = response.id;
       this.name = response.name;

@@ -16,7 +16,7 @@
               <thead class="align-middle">
                 <tr>
                   <th class="text-center align-midle" style="width: 60px;">No</th>
-                  <th>Username</th>
+                  <th>Nama Lengkap</th>
                   <th>Jenis Kelamin</th>
                   <th>Email</th>
                   <th>Alamat</th>
@@ -43,7 +43,7 @@
                   <td class="text-center">
                     <button class="btn btn-sm btn-warning" @click="edit(item.id)"><i class="bx bx-pencil"></i>
                       Edit</button>
-                    <button class="btn btn-sm btn-danger ms-2" @click="hapus(item.id)"><i class="bx bx-trash"></i>
+                    <button class="btn btn-sm btn-danger ms-2" @click="hapus(item.id)" v-if="item.id != session.getUser.id"><i class="bx bx-trash"></i>
                       Hapus</button>
                   </td>
                 </tr>
@@ -72,8 +72,8 @@
           <form role="doc-part">
             <div class="row">
               <div class="col-md-6 mb-3">
-                <label for="operator" class="form-label">Username: </label>
-                <input type="text" name="operator" id="operator" class="form-control" placeholder="Masukkan Username"
+                <label for="operator" class="form-label">Nama Lengkap: </label>
+                <input type="text" name="operator" id="operator" class="form-control" placeholder="Masukkan Nama Lengkap"
                   v-model="name">
               </div>
               <div class="col-md-6 mb-3">
@@ -85,6 +85,7 @@
                 <label for="password" class="form-label">Password: </label>
                 <input type="password" name="password" id="password" class="form-control" placeholder="Masukkan Password"
                   v-model="password">
+                  <small v-if="id > 0">Untuk keamanan, password sengaja dikosongkan</small>
               </div>
               <div class="col-md-6 mb-3">
                 <label for="role" class="form-label">Role: </label>
@@ -167,6 +168,7 @@ import Notify from '../../helpers/notify';
 import { isDisableLayer, isEnableLayer } from '../../helpers/handleEvent';
 import usePagination from '../../composables/pagination';
 import Pagination from '../../components/Pagination.vue';
+import { useSessionStore } from '../../stores/session';
 const query = ref<string>('');
 const {
   result,
@@ -189,14 +191,30 @@ onMounted(async () => {
 });
 
 const addStudent = ref(false);
-
+const session = useSessionStore();
 const addStudentClick = () => {
   addStudent.value = true;
+  clearForm();
+  isDisableLayer();
 };
+
+const clearForm = () => {
+  id.value = 0;
+  email.value = '';
+  name.value = '';
+  password.value = '';
+  role.value = '';
+  gender.value = 'Pria';
+  address.value = '';
+  birthDate.value = '';
+  phone.value = '';
+  thumbnail.value = '';
+}
 
 const back = async () => {
   addStudent.value = false;
   await fetchData();
+  clearForm();
   isDisableLayer();
 };
 
@@ -260,6 +278,7 @@ const save = async () => {
 
   if (id.value > 0) {
     response = await putResource('/user/' + id.value, data);
+    id.value = 0;
   } else {
     response = await postResource('/user', data);
   }

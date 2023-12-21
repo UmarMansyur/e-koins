@@ -51,6 +51,8 @@
               <span>Pengaturan</span>
             </a>
             <ul class="sub-menu mm-collapse">
+              <li :class="$route.path.includes('/pengaturan/kelas') ? 'mm-active' : ''">
+              <RouterLink to="/pengaturan/kelas">Kelas</RouterLink></li>
               <li :class="$route.path.includes('/pengaturan/operator') ? 'mm-active' : ''">
                 <RouterLink to="/pengaturan/operator">Operator</RouterLink></li>
               <li :class="$route.path.includes('/pengaturan/profile') ? 'mm-active' : ''">
