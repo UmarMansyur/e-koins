@@ -7,6 +7,9 @@
           <button class="btn btn-info" @click="addStudentClick">
             <i class="bx bx-plus-circle"></i> Tambah Siswa
           </button>
+          <button class="btn btn-success ms-1" v-if="existCheckBox" data-bs-target="#next-grade" data-bs-toggle="modal">
+            <i class="bx bx-chevrons-up"></i> Naik Kelas
+          </button>
         </div>
       </div>
       <LimitAndSearch />
@@ -18,7 +21,8 @@
                 <tr>
                   <th class="text-center">
                     <div class="form-check d-flex justify-content-center">
-                      <input class="form-check-input" type="checkbox" id="formCheck1">
+                      <input class="form-check-input" type="checkbox" v-model="checkAll" id="formCheck1"
+                        @click="handleCheckAll()">
                       <label for="formCheck1"></label>
                     </div>
                   </th>
@@ -32,7 +36,9 @@
               <tbody class="align-middle">
                 <tr v-for="(item, index) in result" :key="index">
                   <td class="text-center">
-                    <input class="form-check-input" type="checkbox" :id="'formCheck' + item.id">
+                    <input class="form-control" type="hidden" name="id[]" :value="item.student.id">
+                    <input class="form-check-input" name="checkbox[]" type="checkbox" :id="'formCheck' + item.id"
+                      @click="checkBox()">
                   </td>
                   <td>
                     <div class="d-flex align-items-center">
@@ -51,15 +57,17 @@
                       item.academicYears.semester == 1 ? 'Ganjil' : 'Genap' }}</span>
                   </td>
                   <td class="text-center">
-                    <button class="btn btn-primary btn-sm" @click="handleQrCode(item.qrCode)" data-bs-toggle="modal" data-bs-target="#dinamyc-modal">
+                    <button class="btn btn-primary btn-sm" @click="handleQrCode(item.qrCode)" data-bs-toggle="modal"
+                      data-bs-target="#dinamyc-modal">
                       <i class="mdi mdi-qrcode font-size-14"></i> Lihat
                     </button>
                   </td>
                   <td class="text-center">
-                    <button class="btn btn-warning btn-sm mx-2" @click="edit(1)">
+                    <button class="btn btn-warning btn-sm mx-2" @click="edit(item.id)">
                       <i class="bx bx-pencil"></i> Edit
                     </button>
-                    <button class="btn btn-danger btn-sm" @click="hapus(1)"><i class="bx bx-trash"></i>Hapus</button>
+                    <button class="btn btn-danger btn-sm" @click="hapus(item.id)"><i
+                        class="bx bx-trash"></i>Hapus</button>
                   </td>
                 </tr>
               </tbody>
@@ -67,13 +75,40 @@
           </div>
         </div>
       </div>
-      <Modal title="Lihat QR Code" >
+      <Modal title="Lihat QR Code">
         <div class="row">
           <div class="col-12 text-center">
             <h6 class="mb-3">E-Koins</h6>
             <img :src="qrCode" alt="" class="img-fluid">
             <p class="mt-3">Scan QR Code untuk melakukan transaksi</p>
-            <button class="btn btn-success btn-sm" @click="downloadQr()" v-if="qrCode.length > 0"><i class="mdi mdi-download"></i> Download</button>
+            <button class="btn btn-success btn-sm" @click="downloadQr()" v-if="qrCode.length > 0"><i
+                class="mdi mdi-download"></i> Download</button>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal title="Naik Kelas" id="next-grade">
+        <div class="row">
+          <div class="col-12 mb-3">
+            <label for="kelas">Kelas: </label>
+            <select class="form-select" aria-label="kelas" v-model="classId">
+              <option value="" disabled>Pilih Kelas</option>
+              <option v-for="(item, index) in classList" :key="index" :value="item.id">{{ item.name }}</option>
+            </select>
+          </div>
+          <div class="col-12 mb-3">
+            <label for="tahun_akademik">Tahun Akademik: </label>
+            <select class="form-select" aria-label="tahun_akademik" v-model="academicYearId">
+              <option value="" disabled>Pilih Tahun Akademik</option>
+              <option v-for="(item, index) in academyc_list" :key="index" :value="item.id">{{ item.name }} - {{
+                item.semester == 1 ? 'Ganjil' : 'Genap' }}</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <button class="btn btn-light" data-bs-dismiss="modal"><i class="bx bx-x"></i> Batal</button>
+          </div>
+          <div class="col-md-6 text-end">
+            <button class="btn btn-info" data-bs-dismiss="modal" @click="nextGrade" :disabled="!validateNextGrade"><i class="bx bx-send"></i> Simpan</button>
           </div>
         </div>
       </Modal>
@@ -201,6 +236,7 @@ import { isDisableLayer, isEnableLayer } from '../../helpers/handleEvent';
 import usePagination from '../../composables/pagination';
 import Pagination from '../../components/Pagination.vue';
 import Modal from '../../components/Modal.vue';
+import { watch } from 'vue';
 const query = ref<string>('');
 const firstQuery = ref<string>('?role=student');
 const {
@@ -231,8 +267,85 @@ const handleQrCode = (link: string) => {
   qrCode.value = link;
 };
 
+const validateNextGrade = ref<boolean>(false);
+
+
+
+const handleCheckAll = () => {
+  const checkboxes = document.querySelectorAll('input[name="checkbox[]"]');
+  checkboxes.forEach((checkbox: any) => {
+    checkbox.checked = !checkbox.checked;
+    if (checkbox.checked) {
+      existCheckBox.value = true;
+    } else {
+      existCheckBox.value = false;
+    }
+  });
+};
+
+const checkAll = ref<boolean>(false);
+const existCheckBox = ref<boolean>(false);
+const checkBox = () => {
+  const checkboxes = document.querySelectorAll('input[name="checkbox[]"]');
+
+  let count = 0;
+  checkboxes.forEach((checkbox: any) => {
+    if (checkbox.checked) {
+      count++;
+    }
+  });
+
+  if (count > 0) {
+    existCheckBox.value = true;
+  } else {
+    existCheckBox.value = false;
+  }
+
+  if (count == checkboxes.length) {
+    checkAll.value = true;
+  } else {
+    checkAll.value = false;
+  }
+};
+
 const downloadQr = () => {
   window.open(qrCode.value, '_blank');
+};
+
+const nextGrade = async () => {
+  const checkboxes = document.querySelectorAll('input[name="checkbox[]"]');
+  let data: any = [];
+  checkboxes.forEach((checkbox: any) => {
+    if (checkbox.checked) {
+      data.push({
+        studentId: Number(checkbox.previousElementSibling.value),
+        classId: classId.value,
+        academicYearId: academicYearId.value,
+        qrCode: 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + JSON.stringify({
+          studentId: Number(checkbox.previousElementSibling.value),
+          classId: classId.value,
+          academicYearId: academicYearId.value,
+        })
+      });
+    }
+  });
+  isEnableLayer();
+  const response = await putResource('/class/student/next-grade', {
+    data: data
+  });
+  if (response) {
+    Notify.success(response.message);
+    existCheckBox.value = false;
+    checkAll.value = false;
+    classId.value = '';
+    academicYearId.value = '';
+    const checkboxes = document.querySelectorAll('input[name="checkbox[]"]');
+    checkboxes.forEach((checkbox: any) => {
+      checkbox.checked = false;
+    });
+    await fetchData();
+  }
+  isDisableLayer();
 };
 
 const classList = ref<any>({});
@@ -370,7 +483,7 @@ const save = async () => {
 
 const hapus = async (i: number) => {
   Notify.confirm('Apakah anda yakin ingin menghapus data ini?', async () => {
-    const response = await deleteResource('/user/' + i);
+    const response = await deleteResource('/user/' + i + '?role=student');
     if (response) {
       Notify.success(response.message);
       await fetchData();
@@ -381,22 +494,29 @@ const hapus = async (i: number) => {
 const edit = async (i: number) => {
   const response = await getResource('/user/' + i + '?role=student');
   if (response) {
-    console.log(response);
-    email.value = response.data.email;
-    name.value = response.data.name;
+    email.value = response.data.student.email;
+    name.value = response.data.student.name;
     password.value = '';
-    role.value = response.data.role;
-    gender.value = response.data.gender;
-    address.value = response.data.address;
-    birthDate.value = response.data.birthDate;
-    phone.value = response.data.phone;
-    classId.value = response.data.classId;
-    academicYearId.value = response.data.academicYearId;
+    role.value = response.data.student.role;
+    gender.value = response.data.student.gender;
+    address.value = response.data.student.address;
+    birthDate.value = new Date(response.data.student.birthDate).toISOString().substr(0, 10);
+    phone.value = response.data.student.phone;
+    classId.value = response.data.class.id;
+    academicYearId.value = response.data.academicYears.id;
 
-    id.value = i;
+    id.value = response.data.student.id;
     isDisableLayer();
     addStudent.value = true;
   }
 }
+
+watch([classId, academicYearId], () => {
+  if (classId.value != '' && academicYearId.value != '') {
+    validateNextGrade.value = true;
+  } else {
+    validateNextGrade.value = false;
+  }
+});
 
 </script>

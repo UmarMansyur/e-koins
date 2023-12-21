@@ -1,4 +1,18 @@
 <template>
+  <div class="modal fade" id="qrCodeModal" role="dialog" aria-labelledby="qrCodeModalLabel">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-body">
+          <div id="qrCode-scanner"></div>
+          <div class="d-flex justify-content-center">
+            <button class="btn btn-secondary mt-3" @click="closeCamera" data-bs-dismiss="modal" id="btn-close-camera">
+              <i class="mdi mdi-camera-off"></i> Tutup Kamera
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <header id="page-topbar">
     <div class="navbar-header">
       <div class="d-flex">
@@ -91,10 +105,16 @@
             </div>
           </div>
         </div> -->
+        <div class="dropdown d-inline-block bg-info text-white border-start">
+          <button type="button" class="btn header-item" id="page-header-user-dropdown" data-bs-toggle="modal"
+            data-bs-target="#qrCodeModal" @click="openCamera">
+            <i class="mdi mdi-qrcode-scan font-size-24"></i>
+          </button>
+
+        </div>
         <div class="dropdown d-inline-block">
           <button type="button" class="btn header-item border-end border-start" id="page-header-user-dropdown">
-            <img class="rounded-circle header-profile-user"
-              :src="session.getUser.thumbnail" alt="Header Avatar">
+            <img class="rounded-circle header-profile-user" :src="session.getUser.thumbnail" alt="Header Avatar">
             <span class="d-none d-xl-inline-block ms-1 fw-medium">{{ session.getUser.name }}</span>
           </button>
         </div>
@@ -111,23 +131,19 @@
 
 <script lang="ts">
 declare const feather: any;
+declare const Html5Qrcode: any;
 </script>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useSessionStore } from '../stores/session';
+import { useStudentStore } from '../stores/student';
 import router from '../router';
-// import { sessionPusher } from '../stores/pusher';
-// import router from '../router';
-// import useApi from '../composables/api';
-// import Notify from '../helpers/notify';
-// import { useSessionStore } from '../stores/session';
-// import { isDisableLayer, isEnableLayer } from '../helpers/handleEvent';
-// import useNotification from '../composables/notification';
-// const { deleteResource } = useApi();
+import useApi from '../composables/api';
+import Notify from '../helpers/notify';
+import { isDisableLayer } from '../helpers/handleEvent';
 const session = useSessionStore();
-// const { loadNotification, notifications, unreadNotification,   } = useNotification();
-// const { getResource } = useApi();
+
 function clickedSidebar() {
   document.body.classList.toggle("pace-done");
   document.body.classList.toggle("sidebar-enable");
@@ -161,22 +177,42 @@ onMounted(async () => {
   //   subscribeNotification();
 });
 
-// const subscribeNotification = () => {
-//   const pusher: any = getPusher;
-//   const chanel = pusher.subscribe('testing');
-//   chanel.bind('event', async (_data: any) => {
-//     await loadNotification();
-//   });
-//   feather.replace();
-//   isDisableLayer();
-// };
+const html5QrCode = ref<any>(null);
+onMounted(() => {
+  html5QrCode.value = new Html5Qrcode(/* element id */ "qrCode-scanner");
+});
+const openCamera = () => {
 
-// const readNotification = async (id: string) => {
-//   const response = await getResource('/notification/' + id);
-//   if (response) {
-//     await loadNotification();
-//     router.replace('/verifikasi-pembayaran');
-//   }
-//   isDisableLayer();
-// };
+  const config = {
+    fps: 10,
+    qrbox: 250,
+    aspectRatio: 1,
+  };
+  // html5QrcodeScanner.start({ facingMode: "environment" });
+  html5QrCode.value.start({ facingMode: "environment" }, config, onScanSuccess);
+};
+
+const { postResource } = useApi();
+const studentStore = useStudentStore();
+const onScanSuccess = async (decodedText: any, decodedResult: any) => {
+  const data = JSON.parse(decodedText);
+  const response = await postResource('/transaction/scan/qr-code', data);
+  isDisableLayer();
+  if(response) {
+    studentStore.id = response.data.id;
+    studentStore.name = response.data.studentClass.student.name;
+    studentStore.class = response.data.studentClass.class.name;
+    studentStore.studentId = response.data.studentClassId;
+    studentStore.saldo = response.data.saldo;
+    studentStore.thumbnail = response.data.studentClass.student.thumbnail;
+    Notify.success('Data siswa berhasil di scan');
+  }
+  router.replace('/transaksi/setoran');
+  document.getElementById('btn-close-camera')?.click();
+  console.log(`Scan result: ${decodedText}`, decodedResult);
+};
+
+const closeCamera = () => {
+  html5QrCode.value.stop();
+};
 </script>

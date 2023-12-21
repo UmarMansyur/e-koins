@@ -15,6 +15,7 @@ export const useSessionStore = defineStore({
     gender: '',
     address: '',
   }),
+
   getters: {
     getUser(state: userType) {
       return state;

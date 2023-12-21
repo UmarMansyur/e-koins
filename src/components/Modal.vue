@@ -1,6 +1,6 @@
 
 <template>
-  <div class="modal fade" id="dinamyc-modal" tabindex="-1" aria-hidden="true">
+  <div class="modal fade" :id="id" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -20,6 +20,10 @@
     title: {
       type: String,
       required: true
+    },
+    id: {
+      type: String,
+      default: 'dinamyc-modal'
     }
   })
 </script>
